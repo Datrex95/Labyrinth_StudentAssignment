@@ -36,7 +36,7 @@ public static class PathfindingAlgorithm
     static Dictionary<Vector2Int, float> distances = new Dictionary<Vector2Int, float>();
     static Dictionary<Vector2Int, Vector2Int> edgeNodes = new Dictionary<Vector2Int, Vector2Int>();
 
-    static DPQ<Vector2Int> dpq = new DPQ<Vector2Int>();
+    static DistancePriorityQueue<Vector2Int> dpq = new DistancePriorityQueue<Vector2Int>();
 
     static Graph graph;
     public static List<Vector2Int> FindShortestPath(Vector2Int start, Vector2Int goal, IMapData mapData)
@@ -160,8 +160,6 @@ public static class PathfindingAlgorithm
 
     static void Relax(Vector2Int from, Node to, IMapData mapData)
     {
-        float test1 = distances[to.Vertex],
-            test2 = distances[from];
         if (distances[to.Vertex] > distances[from] + to.EdgeWeight)
         {
             distances[to.Vertex] = distances[from] + to.EdgeWeight;

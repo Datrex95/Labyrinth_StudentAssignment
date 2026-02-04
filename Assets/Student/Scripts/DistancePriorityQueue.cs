@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class DPQ<Tkey>
+class DistancePriorityQueue<Tkey>
 {
     List<float> distanceList = new List<float>();
     List<Tkey> keyList = new List<Tkey>();
