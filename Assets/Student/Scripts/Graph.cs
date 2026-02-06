@@ -35,4 +35,9 @@ public class Graph
 
         return false;
     }
+
+    public void Clear()
+    {
+        adjacentSet.Clear();
+    }
 }

@@ -32,17 +32,17 @@ public static class PathfindingAlgorithm
      HINT: Start simple with BFS (ignore wall costs and vents), then extend to weighted Dijkstra
      </summary> */
     static float impassableWallValue = float.MaxValue;
+    static Graph graph = new Graph();
 
     static Dictionary<Vector2Int, float> distances = new Dictionary<Vector2Int, float>();
     static Dictionary<Vector2Int, Vector2Int> edgeNodes = new Dictionary<Vector2Int, Vector2Int>();
 
     static DistancePriorityQueue<Vector2Int> dpq = new DistancePriorityQueue<Vector2Int>();
 
-    static Graph graph;
     public static List<Vector2Int> FindShortestPath(Vector2Int start, Vector2Int goal, IMapData mapData)
     {
         // TODO: Implement your pathfinding algorithm here
-        graph = new Graph();
+
         SetGraph(start, mapData);
 
         for (int y = 0; y < mapData.Height; y++)
@@ -58,7 +58,7 @@ public static class PathfindingAlgorithm
 
         while (dpq.Count != 0)
         {
-            Vector2Int vertex = dpq.DeQueue();
+            Vector2Int vertex = dpq.PopMinimumItem();
             //Debug.Log(vertex + "Picked position");
             foreach (Node adjacentItem in graph.AdjacentVerticies(vertex))
             {
@@ -77,7 +77,23 @@ public static class PathfindingAlgorithm
 
         return path;
     }
-
+    static void Relax(Vector2Int from, Node to, IMapData mapData)
+    {
+        if (distances[to.Vertex] > distances[from] + to.EdgeWeight)
+        {
+            distances[to.Vertex] = distances[from] + to.EdgeWeight;
+            edgeNodes[to.Vertex] = from;
+            if (!dpq.ContainsKey(to.Vertex))
+            {
+                dpq.Queue(to.Vertex, distances[to.Vertex]);
+            }
+            else
+            {
+                dpq.Update(to.Vertex, distances[to.Vertex]);
+            }
+        }
+    }
+    #region GraphBuildMethods
     static void SetGraph(Vector2Int currentVertex, IMapData mapData)
     {
         Vector2Int[] adjacentArray = new Vector2Int[] {
@@ -142,7 +158,6 @@ public static class PathfindingAlgorithm
     public static bool IsMovementBlocked(Vector2Int from, Vector2Int to, IMapData mapData)
     {
         Debug.Log($"From: {from} To: {to}");
-        Vector2Int direction = to - from;
 
         float cost = AdjacentCost(from, to, mapData);
 
@@ -157,21 +172,5 @@ public static class PathfindingAlgorithm
         // TODO: Implement movement blocking logic
         // For now, allow all movement so character can move while you work on pathfinding
     }
-
-    static void Relax(Vector2Int from, Node to, IMapData mapData)
-    {
-        if (distances[to.Vertex] > distances[from] + to.EdgeWeight)
-        {
-            distances[to.Vertex] = distances[from] + to.EdgeWeight;
-            edgeNodes[to.Vertex] = from;
-            if (!dpq.ContainsKey(to.Vertex))
-            {
-                dpq.Queue(to.Vertex, distances[to.Vertex]);
-            }
-            else
-            {
-                dpq.Update(to.Vertex, distances[to.Vertex]);
-            }
-        }
-    }
+    #endregion
 }
